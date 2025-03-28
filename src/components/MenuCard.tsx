@@ -105,21 +105,23 @@ const MenuCard: React.FC<MenuCardProps> = ({
                 )}
               </div>
               
-              <Button 
-                size="sm" 
-                onClick={() => onAddToCart(item)}
-                className={`${isVipItem ? 'bg-restaurant-gold text-restaurant-dark hover:bg-opacity-90' : 'bg-restaurant-purple hover:bg-opacity-90'} transition-all duration-300`}
-                whileHover={{ scale: 1.05 }}
-                as={motion.button}
-              >
-                <motion.div
-                  whileHover={{ rotate: [0, -15, 15, -15, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <ShoppingCart className="h-4 w-4 mr-1" />
+              <div className="relative overflow-hidden">
+                <motion.div whileHover={{ scale: 1.05 }}>
+                  <Button 
+                    size="sm" 
+                    onClick={() => onAddToCart(item)}
+                    className={`${isVipItem ? 'bg-restaurant-gold text-restaurant-dark hover:bg-opacity-90' : 'bg-restaurant-purple hover:bg-opacity-90'} transition-all duration-300`}
+                  >
+                    <motion.div
+                      whileHover={{ rotate: [0, -15, 15, -15, 0] }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-1" />
+                    </motion.div>
+                    Add
+                  </Button>
                 </motion.div>
-                Add
-              </Button>
+              </div>
             </div>
           </div>
         </CardContent>
