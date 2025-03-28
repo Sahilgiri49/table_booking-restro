@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Menu, ShoppingCart, Clock, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useToast } from '@/components/ui/use-toast';
 import Cart from './Cart';
+import { MenuItem } from '@/utils/pricingLogic';
 
 interface HeaderProps {
   cartItems: MenuItem[];
@@ -25,7 +25,6 @@ const Header: React.FC<HeaderProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const { toast } = useToast();
   
-  // Update time every minute
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
@@ -34,7 +33,6 @@ const Header: React.FC<HeaderProps> = ({
     return () => clearInterval(interval);
   }, []);
   
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -54,7 +52,6 @@ const Header: React.FC<HeaderProps> = ({
     hour12: true
   });
   
-  // Determine time period for display
   const getTimePeriod = () => {
     const hour = currentTime.getHours();
     if (hour >= 8 && hour < 12) return 'Breakfast';

@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShoppingCart, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { MenuItem } from '@/utils/pricingLogic';
 
 interface MenuCardProps {
   item: MenuItem;
@@ -21,7 +21,6 @@ const MenuCard: React.FC<MenuCardProps> = ({
   const [showPrice, setShowPrice] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Animation for price changes
   useEffect(() => {
     if (isDiscounted) {
       setShowPrice(false);

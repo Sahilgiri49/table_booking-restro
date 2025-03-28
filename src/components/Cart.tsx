@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2, ShoppingCart, Gift } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MenuItem } from '@/utils/pricingLogic';
 
 interface CartProps {
   cartItems: MenuItem[];
@@ -26,7 +26,6 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
   const handleCheckout = () => {
     setIsCheckoutOpen(true);
     
-    // Set timeout for session expiry (2 minutes)
     const timeout = setTimeout(() => {
       setIsCheckoutOpen(false);
       clearCart();
@@ -35,7 +34,7 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
         description: "Your checkout session has expired due to inactivity.",
         variant: "destructive"
       });
-    }, 2 * 60 * 1000); // 2 minutes
+    }, 2 * 60 * 1000);
     
     setSessionTimeout(timeout);
   };
@@ -50,14 +49,11 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
   const processPayment = () => {
     setPaymentProcessing(true);
     
-    // Clear session timeout
     if (sessionTimeout) {
       clearTimeout(sessionTimeout);
     }
     
-    // Simulate payment processing
     setTimeout(() => {
-      // Random chance of payment failure (10%)
       const paymentFailed = Math.random() < 0.1;
       
       if (paymentFailed) {
@@ -173,7 +169,6 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
         </>
       )}
       
-      {/* Checkout Dialog */}
       <Dialog open={isCheckoutOpen} onOpenChange={handleCloseCheckout}>
         <DialogContent className="sm:max-w-[500px] bg-restaurant-dark border-restaurant-purple">
           <DialogTitle className="text-xl text-restaurant-gold">Complete Your Order</DialogTitle>
@@ -264,7 +259,6 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
         </DialogContent>
       </Dialog>
       
-      {/* Hidden Mystery Link - This should be subtly placed somewhere in the UI */}
       <div className="mt-4 pt-4 border-t border-gray-700 text-center">
         <a
           href="#"
