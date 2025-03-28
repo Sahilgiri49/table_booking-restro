@@ -160,7 +160,7 @@ const Index = () => {
     
     if (isNewUser()) {
       toast({
-        title: "Welcome to GIRI & SON'S hotel!",
+        title: "Welcome to EZ FOOD'S RESTRO!",
         description: "First-time visitors get a special discount on their order.",
       });
     } else if (!isEligibleForNewUserDiscount()) {
@@ -352,7 +352,7 @@ const Index = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 style={{ WebkitFontSmoothing: 'antialiased' }}
               >
-                GIRI & SON'S
+                EZ FOOD'S
               </motion.span>
               <motion.span 
                 className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]`}
@@ -365,7 +365,7 @@ const Index = () => {
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
                 style={{ WebkitFontSmoothing: 'antialiased' }}
-              > HOTEL</motion.span>
+              > RESTRO</motion.span>
             </motion.h1>
             
             <motion.p
@@ -420,7 +420,7 @@ const Index = () => {
                 animate={{ 
                   boxShadow: [
                     "0 0 5px rgba(126, 105, 171, 0.3)", 
-                    "0 0 15px rgba(126, 105, 171, 0.7)", 
+                    "0 0 15px rgba(81, 60, 128, 0.7)", 
                     "0 0 5px rgba(126, 105, 171, 0.3)"
                   ]
                 }}
@@ -587,7 +587,7 @@ const Index = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            &copy; {new Date().getFullYear()} GIRI & SON'S HOTEL
+            &copy; {new Date().getFullYear()} EZ FOOD'S
           </motion.p>
           <motion.p 
             className="mt-1"

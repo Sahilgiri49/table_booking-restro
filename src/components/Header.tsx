@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            GIRI & SON'S
+            EZ FOOD'S
           </motion.div>
           
           <motion.div
