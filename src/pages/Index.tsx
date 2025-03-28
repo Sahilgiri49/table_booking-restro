@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import Header from '@/components/Header';
 import MenuCard from '@/components/MenuCard';
 import TableBooking from '@/components/TableBooking';
-import CursorGlow from '@/components/CursorGlow';
+import ThemeToggle from '@/components/ThemeToggle';
 import { 
   applyDynamicPricing, 
   incrementPageRefreshes, 
@@ -30,7 +30,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Fresh mozzarella, tomatoes, and basil on our signature crust, baked to perfection in a wood-fired oven.',
     price: 299,
     category: 'Main',
-    imageUrl: 'https://images.unsplash.com/photo-1604917877934-07d8d248d396?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1598023696416-0193a0bcd302?w=500&h=350&fit=crop'
   },
   {
     id: '2',
@@ -38,7 +38,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Creamy Arborio rice slowly cooked with wild mushrooms, finished with truffle oil and aged Parmesan.',
     price: 399,
     category: 'Main',
-    imageUrl: 'https://images.unsplash.com/photo-1633964913329-61d1162a6ada?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=500&h=350&fit=crop'
   },
   {
     id: '3',
@@ -46,7 +46,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Fresh Norwegian salmon fillet with lemon herb butter, served with seasonal vegetables and saffron rice.',
     price: 499,
     category: 'Main',
-    imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&h=350&fit=crop'
+    imageUrl: 'https://www.fromnorway-my.com/globalassets/recipes/salmon/grilled-salmon-with-salsaverde.jpg?width=1100&height=964&transform=downFill&hash=99a924832e165fa5da93a2a739187cc3'
   },
   {
     id: '4',
@@ -54,7 +54,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Warm chocolate cake with a molten center, served with vanilla bean ice cream and fresh berries.',
     price: 199,
     category: 'Dessert',
-    imageUrl: 'https://images.unsplash.com/photo-1631700611307-37dbcb89ef7e?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=500&h=350&fit=crop'
   },
   {
     id: '5',
@@ -62,7 +62,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Selection of premium imported cheeses with artisanal crackers, honeycomb, and wine-poached fruits.',
     price: 349,
     category: 'Appetizer',
-    imageUrl: 'https://images.unsplash.com/photo-1543528176-61b239494933?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1631379578550-7038263db699?w=500&h=350&fit=crop'
   },
   {
     id: '6',
@@ -70,7 +70,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Our award-winning blend of premium spirits, fresh fruit juices, and house-made syrups, served with a unique twist.',
     price: 249,
     category: 'Beverage',
-    imageUrl: 'https://images.unsplash.com/photo-1578547953017-64fd63c5cf19?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500&h=350&fit=crop'
   },
   {
     id: '7',
@@ -78,7 +78,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Tender calamari rings, lightly breaded and fried, served with house-made aioli and spicy marinara sauce.',
     price: 279,
     category: 'Appetizer',
-    imageUrl: 'https://images.unsplash.com/photo-1625938144207-7140bed11e32?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1604909052743-94e838986d24?w=500&h=350&fit=crop'
   },
   {
     id: '8',
@@ -86,7 +86,7 @@ const initialMenuItems: MenuItem[] = [
     description: 'Rotating selection of local craft beers. Ask server for current options, featuring IPAs, stouts, and lagers.',
     price: 199,
     category: 'Beverage',
-    imageUrl: 'https://images.unsplash.com/photo-1600788886242-5c96aabe3757?w=500&h=350&fit=crop'
+    imageUrl: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=500&h=350&fit=crop'
   },
   {
     id: '9',
@@ -135,6 +135,7 @@ const Index = () => {
   const [activeCategory, setActiveCategory] = useState('All Items');
   const { toast } = useToast();
   const { isVip, unlockedVip } = useVipStatus(totalSpent);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   
   const menuRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ 
@@ -159,7 +160,7 @@ const Index = () => {
     
     if (isNewUser()) {
       toast({
-        title: "Welcome to Smart Bistro!",
+        title: "Welcome to GIRI & SON'S hotel!",
         description: "First-time visitors get a special discount on their order.",
       });
     } else if (!isEligibleForNewUserDiscount()) {
@@ -191,6 +192,15 @@ const Index = () => {
       });
     }
   }, [unlockedVip]);
+  
+  useEffect(() => {
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    }
+  }, []);
   
   const updatePricing = () => {
     const now = new Date();
@@ -279,13 +289,29 @@ const Index = () => {
     ? menuItems 
     : menuItems.filter(item => item.category === activeCategory.replace(' Courses', '').replace('s', ''));
   
+  const handleLeaveTable = () => {
+    setTableBooked(false);
+    setCurrentBooking(null);
+    setCartItems([]);
+    localStorage.removeItem('currentBooking');
+    toast({
+      title: "Table Released",
+      description: "You can now book a new table.",
+    });
+  };
+  
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark');
+  };
+  
   return (
-    <div className="min-h-screen bg-restaurant-dark text-white pb-16 relative overflow-hidden">
-      <CursorGlow />
-      
-      <div className="floating-light w-80 h-80 bg-restaurant-purple top-[-10%] left-[20%]"></div>
-      <div className="floating-light w-60 h-60 bg-restaurant-gold bottom-[30%] right-[-5%]"></div>
-      <div className="floating-light w-40 h-40 bg-restaurant-accent bottom-[-5%] left-[30%]"></div>
+    <div className={`min-h-screen transition-colors duration-300 ${
+      theme === 'dark' ? 'bg-restaurant-dark text-white' : 'bg-gray-100 text-gray-900'
+    } pb-16 relative overflow-hidden`}>
+      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
       
       <Header 
         cartItems={cartItems} 
@@ -293,6 +319,7 @@ const Index = () => {
         clearCart={clearCart}
         totalAmount={calculateTotal()}
         isVip={isVip}
+        theme={theme}
       />
       
       <main className="container mx-auto pt-24 px-4 relative z-10">
@@ -307,52 +334,47 @@ const Index = () => {
             }}
             className="relative"
           >
-            <motion.div 
-              className="absolute -top-24 -left-12 w-64 h-64 bg-restaurant-purple opacity-10 rounded-full blur-3xl"
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.1, 0.15, 0.1]
-              }}
-              transition={{ duration: 8, repeat: Infinity }}
-            />
-            
-            <motion.div 
-              className="absolute top-0 right-0 w-40 h-40 bg-restaurant-gold opacity-10 rounded-full blur-3xl"
-              animate={{ 
-                scale: [1, 1.3, 1],
-                opacity: [0.1, 0.2, 0.1]
-              }}
-              transition={{ duration: 6, repeat: Infinity, delay: 1 }}
-            />
-            
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-5xl md:text-7xl font-bold mb-4 tracking-tight"
-              style={{ 
-                textShadow: "0 0 40px rgba(126, 105, 171, 0.5)" 
-              }}
+              className="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight"
             >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-restaurant-gold to-restaurant-accent">Smart Bistro</span> 
-              <span className="relative">
-                <span className="text-white relative z-10">Adventura</span>
-                <motion.span 
-                  className="absolute top-0 left-0 w-full h-full bg-restaurant-purple blur-xl opacity-20 -z-10"
-                  animate={{ 
-                    opacity: [0.2, 0.4, 0.2],
-                    scale: [1, 1.05, 1]
-                  }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-              </span>
+              <motion.span 
+                className={`bg-gradient-to-r from-restaurant-gold via-restaurant-purple to-${theme === 'dark' ? 'white' : 'gray-900'} bg-clip-text text-transparent drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]`}
+                animate={{ 
+                  textShadow: [
+                    "0 0 4px rgba(254, 198, 161, 0.5)",
+                    "0 0 8px rgba(254, 198, 161, 0.8)",
+                    "0 0 4px rgba(254, 198, 161, 0.5)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{ WebkitFontSmoothing: 'antialiased' }}
+              >
+                GIRI & SON'S
+              </motion.span>
+              <motion.span 
+                className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]`}
+                animate={{ 
+                  textShadow: [
+                    "0 0 4px rgba(255, 255, 255, 0.5)",
+                    "0 0 8px rgba(255, 255, 255, 0.8)",
+                    "0 0 4px rgba(255, 255, 255, 0.5)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{ WebkitFontSmoothing: 'antialiased' }}
+              > HOTEL</motion.span>
             </motion.h1>
             
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed"
+              className={`text-xl ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              } max-w-2xl mx-auto leading-relaxed`}
             >
               Experience dining in a new dimension with real-time dynamic pricing 
               and interactive challenges.
@@ -430,11 +452,19 @@ const Index = () => {
                 transition={{ duration: 3, repeat: Infinity }}
               >
                 <h2 className="text-lg font-semibold text-restaurant-gold">Your Table is Reserved</h2>
-                <p className="text-gray-300">
+                <p className="text-gray-300 mb-4">
                   Table #{currentBooking?.tableId} • {' '}
                   {currentBooking?.date ? new Date(currentBooking.date).toLocaleDateString() : ''} • {' '}
                   {currentBooking?.time}
                 </p>
+                <motion.button
+                  onClick={handleLeaveTable}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-restaurant-purple hover:bg-restaurant-purple/80 text-white px-4 py-2 rounded-md transition-colors duration-200 shadow-lg"
+                >
+                  Change Table
+                </motion.button>
               </motion.div>
             </motion.div>
           ) : (
@@ -546,14 +576,18 @@ const Index = () => {
         </motion.section>
       </main>
       
-      <footer className="bg-restaurant-dark py-6 border-t border-gray-800 relative z-10">
-        <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
+      <footer className={`${
+        theme === 'dark' 
+          ? 'bg-restaurant-dark border-gray-800 text-gray-400' 
+          : 'bg-gray-100 border-gray-200 text-gray-600'
+        } py-6 border-t relative z-10`}>
+        <div className="container mx-auto px-4 text-center text-sm">
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            &copy; {new Date().getFullYear()} Smart Bistro Adventura
+            &copy; {new Date().getFullYear()} GIRI & SON'S HOTEL
           </motion.p>
           <motion.p 
             className="mt-1"

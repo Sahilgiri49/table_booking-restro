@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, ThreeElements } from '@react-three/fiber';
 import { OrbitControls, useTexture, Text, PerspectiveCamera } from '@react-three/drei';
@@ -29,7 +28,6 @@ const Table = ({ position, size = [1, 0.5, 1], isAvailable = true, onClick, tabl
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
-        cursor={isAvailable ? 'pointer' : 'not-allowed'}
       >
         <boxGeometry args={size} />
         <meshStandardMaterial 
@@ -155,9 +153,9 @@ const RestaurantScene: React.FC<RestaurantSceneProps> = ({ availableTables, onTa
       
       {selectedTableId && (
         <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-          <div className="bg-restaurant-purple bg-opacity-90 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
-            <p className="text-sm mb-1">Table #{selectedTableId} Selected</p>
-            <p className="text-xs text-gray-300">Continue with booking below</p>
+          <div className="bg-black/80 text-white px-4 py-2 rounded-lg animate-fade-in">
+            <p className="text-base font-medium">Table {selectedTableId} Selected</p>
+            <p className="text-sm text-gray-300">Please confirm your booking below</p>
           </div>
         </div>
       )}

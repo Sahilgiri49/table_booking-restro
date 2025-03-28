@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -158,7 +157,10 @@ const TableBooking: React.FC<TableBookingProps> = ({
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left font-normal border-gray-600 bg-gray-800 text-white"
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-gray-600 bg-gray-800/90 text-white hover:bg-gray-800",
+                        !date && "text-muted-foreground"
+                      )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {date ? format(date, 'PPP') : <span>Pick a date</span>}
@@ -181,7 +183,7 @@ const TableBooking: React.FC<TableBookingProps> = ({
                 <select
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="w-full p-2 rounded-md border border-gray-600 bg-gray-800 text-white"
+                  className="w-full p-2 rounded-md border border-gray-600 bg-gray-800/90 text-white focus:border-restaurant-gold focus:ring-1 focus:ring-restaurant-gold"
                 >
                   {timeSlots.map((slot) => (
                     <option key={slot} value={slot}>
@@ -193,31 +195,25 @@ const TableBooking: React.FC<TableBookingProps> = ({
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-1">Select a Table</label>
-              <div className="border border-gray-700 rounded-lg overflow-hidden">
+              <label className="block text-sm font-medium text-gray-200 mb-3">Select a Table</label>
+              <div className="border border-gray-700 rounded-lg overflow-hidden" style={{ height: '400px' }}>
                 <RestaurantScene 
                   availableTables={availableTables} 
                   onTableSelect={handleTableSelect} 
                 />
               </div>
-              {selectedTable && (
-                <p className="mt-2 text-center text-restaurant-gold">
-                  Table #{selectedTable} selected
-                </p>
-              )}
             </div>
             
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              className="mt-4"
             >
               <Button 
                 onClick={handleBookTable}
                 disabled={!date || !time || !selectedTable}
-                className="w-full bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90 shadow-lg"
+                className="w-full bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90 py-3 text-lg font-semibold"
               >
                 Book Now
               </Button>

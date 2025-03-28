@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, ShoppingCart, Clock, User } from 'lucide-react';
+import { Menu, ShoppingCart, Clock, User, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useToast } from '@/components/ui/use-toast';
 import Cart from './Cart';
 import { MenuItem } from '@/utils/pricingLogic';
+import { motion } from 'framer-motion';
 
 interface HeaderProps {
   cartItems: MenuItem[];
@@ -12,6 +13,7 @@ interface HeaderProps {
   clearCart: () => void;
   totalAmount: number;
   isVip: boolean;
+  theme: 'dark' | 'light';
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -19,7 +21,8 @@ const Header: React.FC<HeaderProps> = ({
   removeFromCart, 
   clearCart,
   totalAmount,
-  isVip
+  isVip,
+  theme
 }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isScrolled, setIsScrolled] = useState(false);
@@ -61,24 +64,30 @@ const Header: React.FC<HeaderProps> = ({
   };
   
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-restaurant-dark bg-opacity-90 shadow-md' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${
+      theme === 'dark' 
+        ? 'bg-restaurant-dark/80 border-gray-800' 
+        : 'bg-white/80 border-gray-200'
+    } backdrop-blur-sm border-b`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Button variant="ghost" size="icon" className="mr-2 text-white">
-              <Menu className="h-6 w-6" />
-            </Button>
-            <h1 className="text-xl md:text-2xl font-semibold text-white">
-              Smart <span className="text-restaurant-gold">Bistro</span>
-            </h1>
-            {isVip && (
-              <span className="ml-2 px-2 py-1 bg-restaurant-gold text-restaurant-dark text-xs rounded-full animate-pulse-soft">
-                VIP
-              </span>
-            )}
-          </div>
+          <motion.div 
+            className={`text-xl font-bold ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            GIRI & SON'S
+          </motion.div>
           
-          <div className="flex items-center space-x-1 md:space-x-4">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center space-x-4"
+          >
             <div className="hidden md:flex items-center mr-4">
               <Clock className="h-4 w-4 text-restaurant-gold mr-1" />
               <span className="text-sm text-white">
@@ -90,18 +99,57 @@ const Header: React.FC<HeaderProps> = ({
               <User className="h-5 w-5" />
             </Button>
             
+            {isVip && (
+              <motion.div 
+                className={`hidden sm:flex items-center space-x-1 ${
+                  theme === 'dark' ? 'text-restaurant-gold' : 'text-restaurant-purple'
+                }`}
+                animate={{ 
+                  textShadow: [
+                    "0 0 2px rgba(254, 198, 161, 0)", 
+                    "0 0 8px rgba(254, 198, 161, 0.8)", 
+                    "0 0 2px rgba(254, 198, 161, 0)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Crown className="h-4 w-4" />
+                <span className="text-sm font-medium">VIP</span>
+              </motion.div>
+            )}
+            
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative text-white">
-                  <ShoppingCart className="h-5 w-5" />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`relative p-2 rounded-full ${
+                    theme === 'dark'
+                      ? 'bg-restaurant-purple/20 hover:bg-restaurant-purple/30'
+                      : 'bg-restaurant-purple/10 hover:bg-restaurant-purple/20'
+                  }`}
+                >
+                  <ShoppingCart className={
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  } />
                   {cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-restaurant-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-restaurant-gold text-black text-xs w-5 h-5 rounded-full flex items-center justify-center">
                       {cartItems.length}
                     </span>
                   )}
-                </Button>
+                </motion.button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-restaurant-dark border-restaurant-purple">
+              
+              <SheetContent className={`${
+                theme === 'dark' 
+                  ? 'bg-restaurant-dark border-gray-800' 
+                  : 'bg-white border-gray-200'
+              }`}>
+                <SheetHeader>
+                  <SheetTitle className={
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }>Your Order</SheetTitle>
+                </SheetHeader>
                 <Cart 
                   cartItems={cartItems} 
                   removeFromCart={removeFromCart}
@@ -110,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({
                 />
               </SheetContent>
             </Sheet>
-          </div>
+          </motion.div>
         </div>
       </div>
     </header>
