@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { useToast } from '@/components/ui/use-toast';
 import RestaurantScene from './RestaurantScene';
+import { motion } from 'framer-motion';
 
 interface TableBookingProps {
   onTableBooked: (tableId: number, date: Date, time: string) => void;
@@ -109,9 +110,11 @@ const TableBooking: React.FC<TableBookingProps> = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full mt-4 bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90">
-          Book a Table
-        </Button>
+        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+          <Button className="w-full mt-4 bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90 shadow-gold-glow">
+            Book a Table
+          </Button>
+        </motion.div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] bg-restaurant-dark border-restaurant-purple">
         <DialogHeader>
@@ -204,13 +207,21 @@ const TableBooking: React.FC<TableBookingProps> = ({
               )}
             </div>
             
-            <Button 
-              onClick={handleBookTable}
-              disabled={!date || !time || !selectedTable}
-              className="w-full bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90"
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              Book Now
-            </Button>
+              <Button 
+                onClick={handleBookTable}
+                disabled={!date || !time || !selectedTable}
+                className="w-full bg-restaurant-gold text-restaurant-dark hover:bg-restaurant-gold/90 shadow-lg"
+              >
+                Book Now
+              </Button>
+            </motion.div>
           </div>
         )}
       </DialogContent>

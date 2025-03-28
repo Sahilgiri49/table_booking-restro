@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -52,13 +52,17 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   h1, h2, h3, h4, h5 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Playfair Display', serif;
   }
 }
 
@@ -132,6 +136,7 @@
   .menu-scroll-container {
     perspective: 1000px;
     @apply overflow-hidden relative;
+    transform-style: preserve-3d;
   }
   
   .menu-scroll-content {
@@ -140,8 +145,9 @@
   }
   
   .menu-item-3d {
-    @apply relative transition-all duration-500;
+    @apply relative transition-all duration-300;
     transform: translateZ(0);
+    transform-style: preserve-3d;
   }
   
   .menu-item-3d:hover {
@@ -272,4 +278,20 @@
     opacity: 0.8;
     transform: scale(1.1);
   }
+}
+
+/* Add fade-in animation for elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
 }

@@ -21,6 +21,7 @@ import {
 } from '@/utils/bookingSystem';
 import { useVipStatus, getVipItems } from '@/hooks/useVipStatus';
 import { ChevronDown, Sparkles } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const initialMenuItems: MenuItem[] = [
   {
@@ -144,6 +145,13 @@ const Index = () => {
   const rotateX = useTransform(scrollYProgress, [0, 1], [2, -2]);
   const rotateY = useTransform(scrollYProgress, [0, 1], [-2, 2]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0.6]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  
+  const scrollToMenu = () => {
+    if (menuRef.current) {
+      menuRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   
   useEffect(() => {
     const count = incrementPageRefreshes();
@@ -357,16 +365,20 @@ const Index = () => {
               className="mt-12 flex justify-center"
             >
               <motion.div
-                whileHover={{ y: -5 }}
-                whileTap={{ y: 0 }}
-                className="animate-bounce"
+                whileHover={{ y: -5, scale: 1.05 }}
+                whileTap={{ y: 0, scale: 0.95 }}
               >
                 <a 
-                  href="#menu" 
-                  className="flex flex-col items-center text-restaurant-gold opacity-80 hover:opacity-100 transition-opacity"
+                  onClick={scrollToMenu}
+                  className="flex flex-col items-center text-restaurant-gold opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
                 >
                   <span className="mb-2">Explore Our Menu</span>
-                  <ChevronDown className="h-6 w-6" />
+                  <motion.div 
+                    animate={{ y: [0, 5, 0] }} 
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ChevronDown className="h-6 w-6" />
+                  </motion.div>
                 </a>
               </motion.div>
             </motion.div>
@@ -461,8 +473,9 @@ const Index = () => {
         </section>
         
         <motion.section 
-          className="mb-20"
+          className="mb-20 perspective-800"
           ref={menuRef}
+          id="menu-section"
           style={{ perspective: 1000 }}
         >
           <div className="flex items-center justify-between mb-8">
@@ -492,36 +505,44 @@ const Index = () => {
             )}
           </div>
           
-          <motion.div 
-            className="menu-scroll-container"
-            style={{ 
-              rotateX,
-              rotateY,
-              opacity
-            }}
-          >
-            <div className="menu-scroll-content">
-              {filteredMenuItems.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  className="menu-item-3d"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ 
-                    delay: index * 0.05, 
-                    duration: 0.5 
-                  }}
-                >
-                  <MenuCard 
-                    item={item}
-                    onAddToCart={addToCart}
-                    isDiscounted={!!item.originalPrice}
-                    isVipItem={item.isVipOnly}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+          <ScrollArea className="h-[600px] overflow-y-auto pr-4">
+            <motion.div 
+              className="menu-scroll-container"
+              style={{ 
+                rotateX,
+                rotateY,
+                opacity,
+                scale
+              }}
+            >
+              <div className="menu-scroll-content">
+                {filteredMenuItems.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    className="menu-item-3d"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: index * 0.05, 
+                      duration: 0.5 
+                    }}
+                    whileHover={{ 
+                      z: 30, 
+                      scale: 1.03,
+                      transition: { duration: 0.2 } 
+                    }}
+                  >
+                    <MenuCard 
+                      item={item}
+                      onAddToCart={addToCart}
+                      isDiscounted={!!item.originalPrice}
+                      isVipItem={item.isVipOnly}
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </ScrollArea>
         </motion.section>
       </main>
       

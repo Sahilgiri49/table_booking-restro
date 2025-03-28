@@ -29,6 +29,7 @@ const Table = ({ position, size = [1, 0.5, 1], isAvailable = true, onClick, tabl
         onClick={onClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
+        cursor={isAvailable ? 'pointer' : 'not-allowed'}
       >
         <boxGeometry args={size} />
         <meshStandardMaterial 
@@ -99,8 +100,15 @@ interface RestaurantSceneProps {
 }
 
 const RestaurantScene: React.FC<RestaurantSceneProps> = ({ availableTables, onTableSelect }) => {
+  const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
+  
+  const handleTableSelect = (tableId: number) => {
+    setSelectedTableId(tableId);
+    onTableSelect(tableId);
+  };
+
   return (
-    <div className="w-full h-[500px] rounded-lg overflow-hidden">
+    <div className="w-full h-[500px] rounded-lg overflow-hidden relative">
       <Canvas shadows dpr={[1, 2]}>
         <PerspectiveCamera makeDefault position={[0, 5, 8]} fov={50} />
         <ambientLight intensity={0.3} />
@@ -116,14 +124,15 @@ const RestaurantScene: React.FC<RestaurantSceneProps> = ({ availableTables, onTa
           const posX = (col - 1) * 2;
           const posZ = (row - 1) * 2;
           const isAvailable = availableTables.includes(index + 1);
+          const isSelected = selectedTableId === (index + 1);
           
           return (
             <Table 
               key={index} 
-              position={[posX, 0, posZ]} 
+              position={[posX, isSelected ? 0.1 : 0, posZ]} 
               tableId={index + 1}
               isAvailable={isAvailable}
-              onClick={() => isAvailable && onTableSelect(index + 1)}
+              onClick={() => isAvailable && handleTableSelect(index + 1)}
             />
           );
         })}
@@ -143,6 +152,15 @@ const RestaurantScene: React.FC<RestaurantSceneProps> = ({ availableTables, onTa
           maxDistance={12}
         />
       </Canvas>
+      
+      {selectedTableId && (
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+          <div className="bg-restaurant-purple bg-opacity-90 text-white px-4 py-2 rounded-lg shadow-lg animate-fade-in">
+            <p className="text-sm mb-1">Table #{selectedTableId} Selected</p>
+            <p className="text-xs text-gray-300">Continue with booking below</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
