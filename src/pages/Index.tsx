@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import MenuCard from '@/components/MenuCard';
 import TableBooking from '@/components/TableBooking';
+import CursorGlow from '@/components/CursorGlow';
 import { 
   applyDynamicPricing, 
   incrementPageRefreshes, 
@@ -19,6 +20,7 @@ import {
   getCurrentBooking 
 } from '@/utils/bookingSystem';
 import { useVipStatus, getVipItems } from '@/hooks/useVipStatus';
+import { ChevronDown, Sparkles } from 'lucide-react';
 
 const initialMenuItems: MenuItem[] = [
   {
@@ -129,8 +131,19 @@ const Index = () => {
   const [currentBooking, setCurrentBooking] = useState<any>(null);
   const [totalSpent, setTotalSpent] = useState(0);
   const [timeOfDay, setTimeOfDay] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState('All Items');
   const { toast } = useToast();
   const { isVip, unlockedVip } = useVipStatus(totalSpent);
+  
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ 
+    target: menuRef,
+    offset: ["start end", "end start"] 
+  });
+  
+  const rotateX = useTransform(scrollYProgress, [0, 1], [2, -2]);
+  const rotateY = useTransform(scrollYProgress, [0, 1], [-2, 2]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0.6]);
   
   useEffect(() => {
     const count = incrementPageRefreshes();
@@ -254,11 +267,17 @@ const Index = () => {
     return "";
   };
   
+  const filteredMenuItems = activeCategory === 'All Items' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === activeCategory.replace(' Courses', '').replace('s', ''));
+  
   return (
     <div className="min-h-screen bg-restaurant-dark text-white pb-16 relative overflow-hidden">
-      <div className="absolute -top-40 -left-40 w-80 h-80 bg-restaurant-purple opacity-20 rounded-full blur-3xl"></div>
-      <div className="absolute top-1/3 -right-40 w-80 h-80 bg-restaurant-gold opacity-10 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-40 left-1/3 w-80 h-80 bg-restaurant-accent opacity-10 rounded-full blur-3xl"></div>
+      <CursorGlow />
+      
+      <div className="floating-light w-80 h-80 bg-restaurant-purple top-[-10%] left-[20%]"></div>
+      <div className="floating-light w-60 h-60 bg-restaurant-gold bottom-[30%] right-[-5%]"></div>
+      <div className="floating-light w-40 h-40 bg-restaurant-accent bottom-[-5%] left-[30%]"></div>
       
       <Header 
         cartItems={cartItems} 
@@ -269,68 +288,123 @@ const Index = () => {
       />
       
       <main className="container mx-auto pt-24 px-4 relative z-10">
-        <section className="text-center mb-12">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
+        <section className="text-center mb-16 hero-animated py-16">
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-restaurant-gold to-restaurant-accent"
+            transition={{ 
+              duration: 1,
+              type: "spring", 
+              stiffness: 50 
+            }}
+            className="relative"
           >
-            Smart Bistro <span className="text-white">Adventura</span>
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-xl text-gray-300 max-w-2xl mx-auto"
-          >
-            Experience dining in a new dimension with real-time dynamic pricing 
-            and interactive challenges.
-          </motion.p>
-          
-          <AnimatePresence>
-            {getPricingNotification() && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="mt-6 inline-block bg-gradient-to-r from-restaurant-purple to-restaurant-dark px-4 py-2 rounded-full text-white text-sm shadow-glow"
-              >
-                {getPricingNotification()}
-              </motion.div>
-            )}
-          </AnimatePresence>
-          
-          {isEligibleForNewUserDiscount() && isNewUser() && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+            <motion.div 
+              className="absolute -top-24 -left-12 w-64 h-64 bg-restaurant-purple opacity-10 rounded-full blur-3xl"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.1, 0.15, 0.1]
+              }}
+              transition={{ duration: 8, repeat: Infinity }}
+            />
+            
+            <motion.div 
+              className="absolute top-0 right-0 w-40 h-40 bg-restaurant-gold opacity-10 rounded-full blur-3xl"
+              animate={{ 
+                scale: [1, 1.3, 1],
+                opacity: [0.1, 0.2, 0.1]
+              }}
+              transition={{ duration: 6, repeat: Infinity, delay: 1 }}
+            />
+            
+            <motion.h1
+              initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              className="mt-4 text-restaurant-accent font-semibold"
+              transition={{ duration: 0.8 }}
+              className="text-5xl md:text-7xl font-bold mb-4 tracking-tight"
+              style={{ 
+                textShadow: "0 0 40px rgba(126, 105, 171, 0.5)" 
+              }}
             >
-              <motion.span
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                className="inline-block"
-              >
-                🎉 New User Discount Applied! Enjoy 10% off your first order.
-              </motion.span>
-            </motion.div>
-          )}
-          
-          {refreshCount >= 5 && (
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-restaurant-gold to-restaurant-accent">Smart Bistro</span> 
+              <span className="relative">
+                <span className="text-white relative z-10">Adventura</span>
+                <motion.span 
+                  className="absolute top-0 left-0 w-full h-full bg-restaurant-purple blur-xl opacity-20 -z-10"
+                  animate={{ 
+                    opacity: [0.2, 0.4, 0.2],
+                    scale: [1, 1.05, 1]
+                  }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                />
+              </span>
+            </motion.h1>
+            
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed"
+            >
+              Experience dining in a new dimension with real-time dynamic pricing 
+              and interactive challenges.
+            </motion.p>
+            
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-2 text-red-400 text-sm"
+              transition={{ delay: 1, duration: 0.8 }}
+              className="mt-12 flex justify-center"
             >
-              ⚠️ Anti-bot measures activated: Prices increased by 5% due to frequent refreshes.
+              <motion.div
+                whileHover={{ y: -5 }}
+                whileTap={{ y: 0 }}
+                className="animate-bounce"
+              >
+                <a 
+                  href="#menu" 
+                  className="flex flex-col items-center text-restaurant-gold opacity-80 hover:opacity-100 transition-opacity"
+                >
+                  <span className="mb-2">Explore Our Menu</span>
+                  <ChevronDown className="h-6 w-6" />
+                </a>
+              </motion.div>
             </motion.div>
-          )}
+          </motion.div>
         </section>
         
-        <section className="mb-8">
+        <AnimatePresence>
+          {getPricingNotification() && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="mb-8 text-center"
+            >
+              <motion.div 
+                className="inline-block bg-gradient-to-r from-restaurant-purple to-restaurant-dark px-6 py-3 rounded-full text-white text-sm shadow-glow"
+                animate={{ 
+                  boxShadow: [
+                    "0 0 5px rgba(126, 105, 171, 0.3)", 
+                    "0 0 15px rgba(126, 105, 171, 0.7)", 
+                    "0 0 5px rgba(126, 105, 171, 0.3)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.03, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="inline-block"
+                >
+                  {getPricingNotification()}
+                </motion.span>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <section className="mb-12">
           {tableBooked ? (
             <motion.div
               initial={{ opacity: 0 }}
@@ -338,14 +412,18 @@ const Index = () => {
               className="fancy-border p-4 rounded-lg text-center relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-restaurant-purple bg-opacity-20 backdrop-blur-sm z-0"></div>
-              <div className="relative z-10">
+              <motion.div 
+                className="relative z-10"
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
                 <h2 className="text-lg font-semibold text-restaurant-gold">Your Table is Reserved</h2>
                 <p className="text-gray-300">
                   Table #{currentBooking?.tableId} • {' '}
                   {currentBooking?.date ? new Date(currentBooking.date).toLocaleDateString() : ''} • {' '}
                   {currentBooking?.time}
                 </p>
-              </div>
+              </motion.div>
             </motion.div>
           ) : (
             <TableBooking 
@@ -356,72 +434,114 @@ const Index = () => {
           )}
         </section>
         
-        <section className="mb-6">
-          <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-restaurant-purple text-white text-sm whitespace-nowrap"
-            >
-              All Items
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-restaurant-dark border border-restaurant-purple text-white text-sm whitespace-nowrap"
-            >
-              Main Courses
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-restaurant-dark border border-restaurant-purple text-white text-sm whitespace-nowrap"
-            >
-              Appetizers
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-restaurant-dark border border-restaurant-purple text-white text-sm whitespace-nowrap"
-            >
-              Desserts
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-4 py-2 rounded-full bg-restaurant-dark border border-restaurant-purple text-white text-sm whitespace-nowrap"
-            >
-              Beverages
-            </motion.button>
-          </div>
-        </section>
-        
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-restaurant-gold">Our Menu</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {menuItems.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
+        <section className="mb-10" id="menu">
+          <div className="flex space-x-2 overflow-x-auto pb-4 scrollbar-hide">
+            {['All Items', 'Main Courses', 'Appetizers', 'Desserts', 'Beverages'].map((category) => (
+              <motion.button
+                key={category}
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveCategory(category)}
+                className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all duration-300 ${
+                  activeCategory === category 
+                    ? 'bg-restaurant-purple text-white shadow-lg' 
+                    : 'bg-restaurant-dark border border-restaurant-purple text-white'
+                }`}
               >
-                <MenuCard 
-                  item={item}
-                  onAddToCart={addToCart}
-                  isDiscounted={!!item.originalPrice}
-                  isVipItem={item.isVipOnly}
-                />
-              </motion.div>
+                {category === activeCategory && (
+                  <motion.span
+                    layoutId="activeCategory"
+                    className="absolute inset-0 rounded-full bg-restaurant-purple -z-10"
+                  />
+                )}
+                {category}
+              </motion.button>
             ))}
           </div>
         </section>
+        
+        <motion.section 
+          className="mb-20"
+          ref={menuRef}
+          style={{ perspective: 1000 }}
+        >
+          <div className="flex items-center justify-between mb-8">
+            <motion.h2 
+              className="text-2xl font-bold text-restaurant-gold"
+              animate={{ y: [0, 3, 0] }}
+              transition={{ duration: 5, repeat: Infinity }}
+            >
+              Our Menu
+            </motion.h2>
+            
+            {isVip && (
+              <motion.div 
+                className="flex items-center text-sm text-restaurant-gold" 
+                animate={{ 
+                  textShadow: [
+                    "0 0 2px rgba(254, 198, 161, 0)", 
+                    "0 0 8px rgba(254, 198, 161, 0.8)", 
+                    "0 0 2px rgba(254, 198, 161, 0)"
+                  ]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Sparkles className="h-4 w-4 mr-1" />
+                <span>VIP Status Active</span>
+              </motion.div>
+            )}
+          </div>
+          
+          <motion.div 
+            className="menu-scroll-container"
+            style={{ 
+              rotateX,
+              rotateY,
+              opacity
+            }}
+          >
+            <div className="menu-scroll-content">
+              {filteredMenuItems.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  className="menu-item-3d"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    delay: index * 0.05, 
+                    duration: 0.5 
+                  }}
+                >
+                  <MenuCard 
+                    item={item}
+                    onAddToCart={addToCart}
+                    isDiscounted={!!item.originalPrice}
+                    isVipItem={item.isVipOnly}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.section>
       </main>
       
       <footer className="bg-restaurant-dark py-6 border-t border-gray-800 relative z-10">
         <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} Smart Bistro Adventura</p>
-          <p className="mt-1">Dynamic prices change based on time of day and demand.</p>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            &copy; {new Date().getFullYear()} Smart Bistro Adventura
+          </motion.p>
+          <motion.p 
+            className="mt-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            Dynamic prices change based on time of day and demand.
+          </motion.p>
         </div>
       </footer>
     </div>

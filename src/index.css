@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -53,12 +53,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Poppins', sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Montserrat', sans-serif;
   }
 
   h1, h2, h3, h4, h5 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
   }
 }
 
@@ -113,6 +113,61 @@
   .card-3d:hover {
     transform: rotateY(5deg) rotateX(5deg);
   }
+  
+  /* New mouse pointer effect styles */
+  .cursor-glow-area {
+    @apply relative overflow-hidden;
+  }
+  
+  .cursor-glow {
+    @apply absolute pointer-events-none rounded-full bg-white/10 opacity-0;
+    width: 300px; 
+    height: 300px;
+    transform: translate(-50%, -50%);
+    filter: blur(30px);
+    transition: opacity 0.2s;
+  }
+  
+  /* 3D Menu scroll effect */
+  .menu-scroll-container {
+    perspective: 1000px;
+    @apply overflow-hidden relative;
+  }
+  
+  .menu-scroll-content {
+    transform-style: preserve-3d;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-8;
+  }
+  
+  .menu-item-3d {
+    @apply relative transition-all duration-500;
+    transform: translateZ(0);
+  }
+  
+  .menu-item-3d:hover {
+    transform: translateZ(20px);
+    z-index: 10;
+  }
+  
+  /* Enhanced animated landing section */
+  .hero-animated {
+    @apply relative overflow-hidden;
+    background: radial-gradient(circle at top right, rgba(217,70,239,0.1), transparent 60%),
+               radial-gradient(circle at bottom left, rgba(126,105,171,0.1), transparent 60%);
+  }
+  
+  .floating-light {
+    @apply absolute rounded-full opacity-20 blur-3xl;
+    animation: float 12s infinite ease-in-out;
+  }
+  
+  .floating-light:nth-child(odd) {
+    animation-delay: -5s;
+  }
+  
+  .floating-light:nth-child(3n) {
+    animation-delay: -7s;
+  }
 }
 
 @layer utilities {
@@ -165,10 +220,16 @@
 /* Animation keyframes */
 @keyframes float {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(0) translateX(20px);
+  }
+  75% {
+    transform: translateY(20px) translateX(10px);
   }
 }
 
@@ -187,5 +248,28 @@
   }
   50% {
     text-shadow: 0 0 12px rgba(254, 198, 161, 0.8);
+  }
+}
+
+@keyframes rotation3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: rotateX(5deg) rotateY(5deg);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
   }
 }
