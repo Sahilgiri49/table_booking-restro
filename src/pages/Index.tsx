@@ -244,10 +244,14 @@ const Index = () => {
       return;
     }
     
-    setCartItems([...cartItems, { ...item, id: item.id + '-' + Date.now() }]);
+    setCartItems(prev => [...prev, { ...item, id: item.id + '-' + Date.now() }]);
     toast({
       title: "Added to Order",
       description: `${item.name} added to your order.`,
+      duration: 2000,
+      className: theme === 'dark' 
+        ? "bg-restaurant-dark text-white border-gray-800"
+        : "bg-white text-gray-900 border-gray-200"
     });
   };
   
@@ -308,9 +312,7 @@ const Index = () => {
   };
   
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      theme === 'dark' ? 'bg-restaurant-dark text-white' : 'bg-gray-100 text-gray-900'
-    } pb-16 relative overflow-hidden`}>
+    <div className={`min-h-screen ${theme === 'light' ? 'bg-gray-50' : 'bg-[#1a1a1a]'}`}>
       <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
       
       <Header 
@@ -322,8 +324,8 @@ const Index = () => {
         theme={theme}
       />
       
-      <main className="container mx-auto pt-24 px-4 relative z-10">
-        <section className="text-center mb-16 hero-animated py-16">
+      <main className="container mx-auto pt-24 px-4">
+        <section className="text-center mb-16 py-16">
           <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -332,7 +334,6 @@ const Index = () => {
               type: "spring", 
               stiffness: 50 
             }}
-            className="relative"
           >
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
@@ -341,30 +342,28 @@ const Index = () => {
               className="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight"
             >
               <motion.span 
-                className={`bg-gradient-to-r from-restaurant-gold via-restaurant-purple to-${theme === 'dark' ? 'white' : 'gray-900'} bg-clip-text text-transparent drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]`}
+                className={`inline-block bg-gradient-to-r from-[#ffc875] to-[#ff8a3d] bg-clip-text text-transparent ${theme === 'light' ? 'drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]' : ''}`}
                 animate={{ 
                   textShadow: [
-                    "0 0 4px rgba(254, 198, 161, 0.5)",
-                    "0 0 8px rgba(254, 198, 161, 0.8)",
-                    "0 0 4px rgba(254, 198, 161, 0.5)"
+                    "0 0 2px rgba(255, 200, 117, 0.5)",
+                    "0 0 4px rgba(255, 200, 117, 0.7)",
+                    "0 0 2px rgba(255, 200, 117, 0.5)"
                   ]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                style={{ WebkitFontSmoothing: 'antialiased' }}
               >
                 EZ FOOD'S
               </motion.span>
               <motion.span 
-                className={`${theme === 'dark' ? 'text-white' : 'text-gray-900'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]`}
+                className={`inline-block ml-2 ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}
                 animate={{ 
                   textShadow: [
+                    "0 0 2px rgba(255, 255, 255, 0.3)",
                     "0 0 4px rgba(255, 255, 255, 0.5)",
-                    "0 0 8px rgba(255, 255, 255, 0.8)",
-                    "0 0 4px rgba(255, 255, 255, 0.5)"
+                    "0 0 2px rgba(255, 255, 255, 0.3)"
                   ]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                style={{ WebkitFontSmoothing: 'antialiased' }}
               > RESTRO</motion.span>
             </motion.h1>
             
@@ -372,9 +371,7 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className={`text-xl ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              } max-w-2xl mx-auto leading-relaxed`}
+              className={`text-xl font-medium max-w-2xl mx-auto leading-relaxed ${theme === 'light' ? 'text-gray-700' : 'text-gray-200'}`}
             >
               Experience dining in a new dimension with real-time dynamic pricing 
               and interactive challenges.
@@ -384,7 +381,7 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.8 }}
-              className="mt-12 flex justify-center"
+              className="mt-6 flex justify-center"
             >
               <motion.div
                 whileHover={{ y: -5, scale: 1.05 }}
@@ -392,14 +389,18 @@ const Index = () => {
               >
                 <a 
                   onClick={scrollToMenu}
-                  className="flex flex-col items-center text-restaurant-gold opacity-80 hover:opacity-100 transition-opacity cursor-pointer"
+                  className={`flex flex-col items-center font-medium opacity-90 hover:opacity-100 transition-opacity cursor-pointer ${
+                    theme === 'light' 
+                      ? 'text-restaurant-purple drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]' 
+                      : 'text-restaurant-gold drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]'
+                  }`}
                 >
-                  <span className="mb-2">Explore Our Menu</span>
+                  <span className="mb-1">Explore Our Menu</span>
                   <motion.div 
                     animate={{ y: [0, 5, 0] }} 
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <ChevronDown className="h-6 w-6" />
+                    <ChevronDown className="h-5 w-5" />
                   </motion.div>
                 </a>
               </motion.div>
@@ -413,7 +414,7 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="mb-8 text-center"
+              className="mb-4 text-center"
             >
               <motion.div 
                 className="inline-block bg-gradient-to-r from-restaurant-purple to-restaurant-dark px-6 py-3 rounded-full text-white text-sm shadow-glow"

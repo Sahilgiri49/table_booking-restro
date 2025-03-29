@@ -24,15 +24,23 @@ const Header: React.FC<HeaderProps> = ({
   isVip,
   theme
 }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<string>('');
   const [isScrolled, setIsScrolled] = useState(false);
   const { toast } = useToast();
   
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-    
+    const updateTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const displayHours = hours % 12 || 12;
+      setCurrentTime(`${displayHours}:${minutes} ${period}`);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+
     return () => clearInterval(interval);
   }, []);
   
@@ -49,14 +57,8 @@ const Header: React.FC<HeaderProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  const formattedTime = currentTime.toLocaleTimeString([], { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: true
-  });
-  
   const getTimePeriod = () => {
-    const hour = currentTime.getHours();
+    const hour = new Date().getHours();
     if (hour >= 8 && hour < 12) return 'Breakfast';
     if (hour >= 12 && hour < 16) return 'Lunch';
     if (hour >= 16 && hour < 22) return 'Dinner';
@@ -65,22 +67,23 @@ const Header: React.FC<HeaderProps> = ({
   
   return (
     <header className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-300 ${
-      theme === 'dark' 
-        ? 'bg-restaurant-dark/80 border-gray-800' 
-        : 'bg-white/80 border-gray-200'
-    } backdrop-blur-sm border-b`}>
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <motion.div 
-            className={`text-xl font-bold ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            EZ FOOD'S
-          </motion.div>
+      theme === 'light' 
+        ? 'bg-white/90 border-gray-200' 
+        : 'bg-[#1a1a1a]/90 border-gray-800'
+    } backdrop-blur-md border-b`}>
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className={`text-xl font-bold ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              EZ FOOD'S
+            </h1>
+            <div className={`hidden sm:flex items-center space-x-2 ${theme === 'light' ? 'text-gray-700' : 'text-gray-200'} font-medium`}>
+              <Clock className={`h-4 w-4 ${theme === 'light' ? 'text-restaurant-purple' : 'text-restaurant-gold'}`} />
+              <span className="font-semibold">{currentTime}</span>
+              <span className={`text-sm ${theme === 'light' ? 'text-restaurant-purple' : 'text-restaurant-gold'}`}>|</span>
+              <span className={`text-sm ${theme === 'light' ? 'text-restaurant-purple' : 'text-restaurant-gold'}`}>{getTimePeriod()}</span>
+            </div>
+          </div>
           
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -88,14 +91,11 @@ const Header: React.FC<HeaderProps> = ({
             transition={{ duration: 0.5 }}
             className="flex items-center space-x-4"
           >
-            <div className="hidden md:flex items-center mr-4">
-              <Clock className="h-4 w-4 text-restaurant-gold mr-1" />
-              <span className="text-sm text-white">
-                {formattedTime} | {getTimePeriod()}
-              </span>
-            </div>
-            
-            <Button variant="ghost" size="icon" className="text-white">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className={theme === 'light' ? 'text-gray-700' : 'text-white'}
+            >
               <User className="h-5 w-5" />
             </Button>
             

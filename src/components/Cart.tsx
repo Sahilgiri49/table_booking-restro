@@ -92,6 +92,26 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
     }
   };
   
+  const handleRemoveItem = (id: string, name: string) => {
+    removeFromCart(id);
+    toast({
+      title: "Removed from Order",
+      description: `${name} removed from your order.`,
+      duration: 2000,
+      className: "bg-restaurant-dark text-white border-gray-800"
+    });
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    toast({
+      title: "Cart Cleared",
+      description: "All items have been removed from your order.",
+      duration: 2000,
+      className: "bg-restaurant-dark text-white border-gray-800"
+    });
+  };
+  
   return (
     <div className="h-full flex flex-col">
       <div className="flex items-center border-b border-gray-700 pb-4 mb-4">
@@ -131,7 +151,7 @@ const Cart: React.FC<CartProps> = ({ cartItems, removeFromCart, clearCart, total
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => handleRemoveItem(item.id, item.name)}
                     className="h-8 w-8 text-gray-400 hover:text-red-500"
                   >
                     <Trash2 className="h-4 w-4" />
